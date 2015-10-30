@@ -1,0 +1,21 @@
+{
+    "name": "ycore/html",
+    "description": "Laravel Fluent Form and HTML Markup Builder",
+    "keywords": ["Ycore", "laravel", "form", "html"],
+    "license": "MIT",
+    "homepage": "http://github.com/jj-meyer/ycore",
+    "authors": [
+        {
+            "name": "Johan Meyer",
+            "email": "jjmeyer@live.co.za"
+        }
+    ],
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "Ycore\\Html\\": "src/html"
+        }
+    },
+    "minimum-stability": "dev"
+}
