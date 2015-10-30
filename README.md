@@ -30,7 +30,7 @@ You are now able to Fluently build up any HTML markup structure you wish.
 
 Example of the standard Login form using Twitter Bootstrap 4 markup
 
-```
+``` php
     <div class="card">
         <div class="card-header">Login
         </div>
@@ -57,7 +57,7 @@ Example of the standard Login form using Twitter Bootstrap 4 markup
                         ->BUTTON(['type' => 'submit'], 'Login')
                     )
                 !!}
-            {!! $form->close(); !!}
+            {!! $form->close() !!}
         </div>
     </div>
 ```
