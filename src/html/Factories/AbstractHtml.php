@@ -6,9 +6,11 @@
 
 namespace Ycore\Html\Factories;
 
-use Ycore\Html\Contracts\HtmlInterface;
+use Ycore\Html\Contracts\HtmlInterface as HtmlContract;
 
-class AbstractHtml implements HtmlInterface {
+use Ycore\Html\Exceptions\HtmlException;
+
+class AbstractHtml implements HtmlContract {
 
     protected static $voidElements = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
     protected $skipValueTypes = ['file', 'password', 'checkbox', 'radio'];
@@ -182,6 +184,54 @@ class AbstractHtml implements HtmlInterface {
         }
     }
 
+    protected static function unpackArguments($arguments)
+    {
+        $attributes = [];
+        $content    = null;
+
+        if (count($arguments) > 0)
+        {
+            // If the first argument is an array, it contains attributes
+            if (is_array($arguments[0]))
+            {
+                $attributes = array_shift($arguments);
+            }
+
+            // Whatever is left, (the last or only parameter) contains the content
+            $content = array_pop($arguments);
+        }
+
+        if (!is_array($attributes))
+        {
+            throw new InvalidArgumentException("Attributes for method {$method} is invalid. Expected array, received {$attributes}.");
+        }
+
+        if (!is_null($content) && !is_string($content) && !$content instanceOf HtmlContract)
+        {
+            throw new InvalidArgumentException("Content for method {$method} is invalid. Expected string or HtmlContract, received {$content}.");
+        }
+
+        // If the content is not an object, clean it up
+        if (!is_callable($content))
+        {
+            $content = e($content);
+        }
+
+        return array($attributes, $content);
+    }
+
+    /**
+    * Transform key from array to dot syntax.
+    *
+    * @param  string $key
+    *
+    * @return string
+    */
+    protected static function transformKey($key)
+    {
+        return str_replace(['.', '[]', '[', ']'], ['_', '', '.', ''], $key);
+    }
+
     /**
     * Get the ID attribute for a field name.
     *
@@ -223,8 +273,8 @@ class AbstractHtml implements HtmlInterface {
             return $value;
         }
 
-        if (!is_null(old($this->transformKey($attributes['name'])))) {
-            return old($this->transformKey($attributes['name']));
+        if (!is_null(old(self::transformKey($attributes['name'])))) {
+            return old(self::transformKey($attributes['name']));
         }
 
         if (!is_null($value)) {
@@ -232,7 +282,7 @@ class AbstractHtml implements HtmlInterface {
         }
 
         if (isset($this->model)) {
-            return data_get($this->model, $this->transformKey($attributes['name']));
+            return data_get($this->model, self::transformKey($attributes['name']));
         }
     }
 
@@ -257,18 +307,6 @@ class AbstractHtml implements HtmlInterface {
     }
 
     /**
-    * Transform key from array to dot syntax.
-    *
-    * @param  string $key
-    *
-    * @return string
-    */
-    protected function transformKey($key)
-    {
-        return str_replace(['.', '[]', '[', ']'], ['_', '', '.', ''], $key);
-    }
-
-    /**
      * Dynamically invoke new instance when calling an object
      *
      * @param  string $content
@@ -288,28 +326,10 @@ class AbstractHtml implements HtmlInterface {
      */
     public function __call($method, $arguments)
     {
-        $attributes = [];
-        $content    = null;
 
-        if (count($arguments) > 0)
-        {
-            // If the first argument is an array, it contains attributes
-            if (is_array($arguments[0]))
-            {
-                $attributes = array_shift($arguments);
-            }
+        $attributes = self::unpackArguments($arguments);
 
-            // Whatever is left, (the last or only parameter) contains the content
-            $content = array_pop($arguments);
-        }
-
-        // If the content is not an object, clean it up
-        if (!is_callable($content))
-        {
-            $content = e($content);
-        }
-
-        $this->add($method, $attributes, $content);
+        $this->add($method, $attributes[0], $attributes[1]);
 
         return $this;
     }

@@ -187,7 +187,7 @@ abstract class AbstractForm implements FormInterface
             return call_user_func_array(array(&$this->html,$method),$arguments);
         }
 
-        throw new FormException("Call to method $method failed from class ".get_class($this));
+        throw new BadMethodCallException("Call to an undefined method {$method}");
     }
 
     /**
