@@ -62,6 +62,27 @@ Example of the standard Login form using Twitter Bootstrap 4 markup
     </div>
 ```
 
+## Testing
+
+You'd need a laravel application to test the package using the test suite
+
+Install a laravel/laravel application as per the instructions. Then, in the laravel home directory;
+
+``` bash
+
+$ cd tests
+$ ln -s ../[relative path to package]/../ycore/html/tests/html html
+
+```
+
+This creates a symbolic relative link to the package tests directory inside the application test directory. You are now able to run phpunit tests agains this directory.
+
+``` bash
+
+$ phpunit tests/html
+
+```
+
 ## License
 
 Laravel HTMLMin is licensed under [The MIT License (MIT)](LICENSE).
