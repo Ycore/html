@@ -199,16 +199,17 @@ class AbstractHtml implements HtmlContract {
 
             // Whatever is left, (the last or only parameter) contains the content
             $content = array_pop($arguments);
+            //$content = end($arguments) ?: null;
         }
 
         if (!is_array($attributes))
         {
-            throw new InvalidArgumentException("Attributes for method {$method} is invalid. Expected array, received {$attributes}.");
+            throw new \InvalidArgumentException("Attributes are invalid. Expected array, received {$attributes}.");
         }
 
         if (!is_null($content) && !is_string($content) && !$content instanceOf HtmlContract)
         {
-            throw new InvalidArgumentException("Content for method {$method} is invalid. Expected string or HtmlContract, received {$content}.");
+            throw new \InvalidArgumentException("Content is invalid. Expected string or HtmlContract, received " . var_export($content, true));
         }
 
         // If the content is not an object, clean it up

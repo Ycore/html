@@ -4,18 +4,58 @@ namespace Ycore\Html\Factories;
 
 use Illuminate\Routing\UrlGenerator;
 
-use Ycore\Html\Contracts\FormInterface;
 use Ycore\Html\Contracts\HtmlInterface;
+use Ycore\Html\Contracts\FormInterface;
 
 use Ycore\Html\Exceptions\FormException;
 
 abstract class AbstractForm implements FormInterface
 {
 
-    protected $csrf = null;
+    /**
+    * The URL generator instance.
+    *
+    * @var \Illuminate\Routing\UrlGenerator
+    */
+    protected $url;
+
+    /**
+    * The HTML builder instance.
+    *
+    * @var Ycore\Html\Contracts\HtmlInterface
+    */
+    protected $html;
+
+    /**
+    * The CSRF token used by the form builder.
+    *
+    * @var string
+    */
+    protected $csrf;
+
+    /**
+    * The reserved form open attributes.
+    *
+    * @var array
+    */
     protected $reserved = ['method', 'url', 'route', 'action', 'files'];
+
+    /**
+    * The form methods that should be spoofed, in uppercase.
+    *
+    * @var array
+    */
     protected $spoofedMethods = ['DELETE', 'PATCH', 'PUT'];
 
+    /**
+    * Create a new form builder instance.
+    *
+    * @param  \Illuminate\Routing\UrlGenerator  $url
+    * @param Ycore\Html\Contracts\HtmlInterface $html
+    * @param  string                            $csrf
+    *
+    * @return void
+    */
     public function __construct(UrlGenerator $url, HtmlInterface $html, $csrf = null)
     {
         $this->html = $html;
@@ -182,12 +222,11 @@ abstract class AbstractForm implements FormInterface
      */
     public function __call($method, $arguments)
     {
-        if ($this->html)
-        {
+        if ($this->html) {
             return call_user_func_array(array(&$this->html,$method),$arguments);
         }
 
-        throw new BadMethodCallException("Call to an undefined method {$method}");
+        throw new \BadMethodCallException("Call to an undefined method {$method}");
     }
 
     /**

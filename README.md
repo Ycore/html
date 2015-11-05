@@ -85,4 +85,4 @@ $ phpunit tests/html
 
 ## License
 
-Laravel HTMLMin is licensed under [The MIT License (MIT)](LICENSE).
+Ycore/HTML is licensed under [The MIT License (MIT)](LICENSE).
